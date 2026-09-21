@@ -356,7 +356,7 @@ export default function MinesweeperPage() {
         onClick={() => handleCellClick(r, c)}
         onContextMenu={(e) => handleCellRightClick(e, r, c)}
         onDoubleClick={() => handleCellDoubleClick(r, c)}
-        className={`flex h-7 w-7 items-center justify-center rounded-[3px] border border-black/30 text-xs font-bold transition-colors ${bg}`}
+        className={`flex aspect-square w-full items-center justify-center rounded-[3px] border border-black/30 text-xs font-bold transition-colors ${bg}`}
       >
         {content}
       </button>
@@ -364,7 +364,7 @@ export default function MinesweeperPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#161b22] px-4 py-10 text-white">
+    <main className="min-h-screen bg-[#161b22] px-4 py-10 text-white sm:px-6 sm:py-12">
       <div className="mx-auto max-w-3xl">
         <Link
           href="/"
@@ -374,7 +374,7 @@ export default function MinesweeperPage() {
         </Link>
 
         <div className="mt-4 flex flex-col items-center text-center">
-          <h1 className="text-3xl font-extrabold tracking-wide">💣 踩地雷</h1>
+          <h1 className="text-3xl font-extrabold tracking-wide sm:text-4xl">💣 踩地雷</h1>
           <p className="mt-1 max-w-md text-sm text-sky-100/70">
             目標：在不踩到任何地雷的情況下，翻開雷區中所有安全的方格。數字代表周圍 8 格內的地雷數。
           </p>
@@ -428,8 +428,11 @@ export default function MinesweeperPage() {
 
         <div className="mt-6 overflow-x-auto pb-4">
           <div
-            className="mx-auto grid w-fit gap-[2px] rounded-lg bg-black/40 p-2"
-            style={{ gridTemplateColumns: `repeat(${config.cols}, 28px)` }}
+            className="mx-auto grid gap-[2px] rounded-lg bg-black/40 p-2"
+            style={{
+              gridTemplateColumns: `repeat(${config.cols}, minmax(16px, 1fr))`,
+              width: `min(100%, ${config.cols * 30}px)`,
+            }}
           >
             {board.flatMap((row, r) => row.map((cell, c) => renderCell(cell, r, c)))}
           </div>

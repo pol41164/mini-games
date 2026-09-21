@@ -166,18 +166,18 @@ function CardView({
       draggable
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      className={`absolute flex h-[100px] w-[70px] cursor-grab select-none flex-col justify-between rounded-lg border border-zinc-300 bg-white p-1.5 shadow-md transition-transform hover:-translate-y-1 active:cursor-grabbing ${
+      className={`absolute flex h-[calc(var(--cw)*10/7)] w-[var(--cw)] cursor-grab select-none flex-col justify-between rounded-lg border border-zinc-300 bg-white p-1 shadow-md transition-transform hover:-translate-y-1 active:cursor-grabbing sm:p-1.5 ${
         selected ? "-translate-y-2 ring-2 ring-amber-400" : ""
       } ${dragging ? "opacity-40" : ""} ${red ? "text-red-600" : "text-zinc-900"}`}
     >
-      <div className="text-xs font-bold leading-none">
+      <div className="text-[9px] font-bold leading-none sm:text-[10px] md:text-xs">
         <div>{rankLabel(card.rank)}</div>
         <div>{SUIT_SYMBOL[card.suit]}</div>
       </div>
-      <div className="self-center text-2xl leading-none">
+      <div className="self-center text-base leading-none sm:text-xl md:text-2xl">
         {SUIT_SYMBOL[card.suit]}
       </div>
-      <div className="self-end rotate-180 text-xs font-bold leading-none">
+      <div className="self-end rotate-180 text-[9px] font-bold leading-none sm:text-[10px] md:text-xs">
         <div>{rankLabel(card.rank)}</div>
         <div>{SUIT_SYMBOL[card.suit]}</div>
       </div>
@@ -352,7 +352,7 @@ export default function SolitairePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#04331f] px-4 py-10 text-white">
+    <main className="min-h-screen bg-[#04331f] px-4 py-10 text-white sm:px-6 sm:py-12">
       <div className="mx-auto max-w-4xl">
         <Link
           href="/"
@@ -362,7 +362,7 @@ export default function SolitairePage() {
         </Link>
 
         <div className="mt-4 flex flex-col items-center text-center">
-          <h1 className="text-3xl font-extrabold tracking-wide">🃏 接龍</h1>
+          <h1 className="text-3xl font-extrabold tracking-wide sm:text-4xl">🃏 接龍</h1>
           <p className="mt-1 max-w-lg text-sm text-emerald-100/70">
             目標：把 52 張牌依花色從 A 收集到 K，堆進右上角的目標格。牌列排列需紅黑交替、由大到小遞減；左上角的自由儲存格可暫放單張牌，方便取出壓在下方的關鍵牌。
           </p>
@@ -384,13 +384,13 @@ export default function SolitairePage() {
         </div>
 
         <div className="mt-8 overflow-x-auto pb-4">
-          <div className="mx-auto w-fit">
+          <div className="mx-auto w-fit [--cw:44px] sm:[--cw:56px] md:[--cw:70px]">
             <div className="flex items-start justify-between">
               <div>
                 <p className="mb-1 text-center text-[11px] font-semibold uppercase tracking-wide text-emerald-100/50">
                   自由儲存區
                 </p>
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                   {game.free.map((slot, i) => {
                     const isSelected =
                       !!selected &&
@@ -402,10 +402,10 @@ export default function SolitairePage() {
                         onClick={() => handlePileClick({ type: "free", index: i })}
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop({ type: "free", index: i }, e)}
-                        className="relative h-[100px] w-[70px]"
+                        className="relative h-[calc(var(--cw)*10/7)] w-[var(--cw)]"
                       >
                         {slot.length === 0 ? (
-                          <div className="h-[100px] w-[70px] rounded-lg border-2 border-dashed border-white/15" />
+                          <div className="h-[calc(var(--cw)*10/7)] w-[var(--cw)] rounded-lg border-2 border-dashed border-white/15" />
                         ) : (
                           <CardView
                             card={slot[0]}
@@ -433,7 +433,7 @@ export default function SolitairePage() {
                 <p className="mb-1 text-center text-[11px] font-semibold uppercase tracking-wide text-emerald-100/50">
                   目標格
                 </p>
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                   {SUITS.map((suit) => {
                     const isSelected =
                       !!selected &&
@@ -445,11 +445,11 @@ export default function SolitairePage() {
                         onClick={() => handlePileClick({ type: "foundation", suit })}
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop({ type: "foundation", suit }, e)}
-                        className="relative h-[100px] w-[70px]"
+                        className="relative h-[calc(var(--cw)*10/7)] w-[var(--cw)]"
                       >
                         {game.foundations[suit].length === 0 ? (
                           <div
-                            className={`flex h-[100px] w-[70px] items-center justify-center rounded-lg border-2 border-dashed text-2xl ${
+                            className={`flex h-[calc(var(--cw)*10/7)] w-[var(--cw)] items-center justify-center rounded-lg border-2 border-dashed text-base sm:text-xl md:text-2xl ${
                               isRed(suit)
                                 ? "border-red-400/25 text-red-400/25"
                                 : "border-white/20 text-white/20"
@@ -486,10 +486,18 @@ export default function SolitairePage() {
               </div>
             </div>
 
-            <div className="mt-8 flex gap-3">
+            <div className="mt-6 flex gap-1.5 sm:mt-8 sm:gap-2 md:gap-3">
               {game.tableau.map((column, colIndex) => {
-                const positions = column.map((_, idx) => idx * 26);
-                const colHeight = Math.max(140, positions.at(-1)! + 100 || 140);
+                // ratios are expressed in units of one card width (--cw); at
+                // the original 70px card width these match the old raw px
+                // values (26px stack offset, 100px card height).
+                const positionRatios = column.map((_, idx) => (idx * 26) / 70);
+                const colHeightRatio = Math.max(
+                  2,
+                  positionRatios.length > 0
+                    ? positionRatios[positionRatios.length - 1] + 10 / 7
+                    : 2,
+                );
 
                 return (
                   <div
@@ -497,11 +505,11 @@ export default function SolitairePage() {
                     onClick={() => handlePileClick({ type: "tableau", index: colIndex })}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop({ type: "tableau", index: colIndex }, e)}
-                    className="relative w-[70px]"
-                    style={{ height: colHeight }}
+                    className="relative w-[var(--cw)]"
+                    style={{ height: `calc(var(--cw) * ${colHeightRatio})` }}
                   >
                     {column.length === 0 && (
-                      <div className="absolute h-[100px] w-[70px] rounded-lg border-2 border-dashed border-white/15" />
+                      <div className="absolute h-[calc(var(--cw)*10/7)] w-[var(--cw)] rounded-lg border-2 border-dashed border-white/15" />
                     )}
                     {column.map((card, idx) => {
                       const isSelected =
@@ -515,7 +523,10 @@ export default function SolitairePage() {
                           card={card}
                           selected={isSelected}
                           dragging={isSelected && !!dragSource}
-                          style={{ top: positions[idx], zIndex: idx }}
+                          style={{
+                            top: `calc(var(--cw) * ${positionRatios[idx]})`,
+                            zIndex: idx,
+                          }}
                           onClick={(e) =>
                             handleCardClick({ type: "tableau", index: colIndex }, idx, e)
                           }

@@ -377,7 +377,7 @@ export default function SnakePage() {
   }, [started, gameOver]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-[#060a14] px-6 py-12 text-white">
+    <main className="flex min-h-screen flex-col items-center bg-[#060a14] px-4 py-10 text-white sm:px-6 sm:py-12">
       <div className="w-full max-w-xl">
         <Link
           href="/"
@@ -387,12 +387,12 @@ export default function SnakePage() {
         </Link>
 
         <div className="mt-4 flex flex-col items-center text-center">
-          <h1 className="text-3xl font-extrabold tracking-wide">🐍 貪吃蛇</h1>
+          <h1 className="text-3xl font-extrabold tracking-wide sm:text-4xl">🐍 貪吃蛇</h1>
           <p className="mt-1 text-sm text-emerald-100/60">
             用方向鍵或 WASD 控制蛇的移動，吃到食物會變長，撞牆或咬到自己就結束
           </p>
 
-          <div className="mt-5 flex items-center gap-3 text-sm">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm">
             <span className="rounded-full bg-emerald-500/10 px-4 py-1.5 font-semibold text-emerald-300">
               分數：{score}
             </span>
@@ -402,12 +402,12 @@ export default function SnakePage() {
           </div>
         </div>
 
-        <div className="relative mx-auto mt-6 w-fit">
+        <div className="relative mx-auto mt-6 w-full max-w-[440px]">
           <canvas
             ref={canvasRef}
             width={CANVAS_SIZE}
             height={CANVAS_SIZE}
-            className="rounded-2xl border border-emerald-500/20 shadow-[0_0_40px_rgba(16,185,129,0.15)]"
+            className="h-auto w-full rounded-2xl border border-emerald-500/20 shadow-[0_0_40px_rgba(16,185,129,0.15)]"
           />
 
           {(!started || gameOver) && (
