@@ -65,6 +65,8 @@ export default function SnakePage() {
   const [paused, setPaused] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
   useEffect(() => {
     try {
       const raw = localStorage.getItem(BEST_SCORE_KEY);
@@ -358,6 +360,16 @@ export default function SnakePage() {
     draw();
   }, [draw]);
 
+  const queueDirection = useCallback(
+    (dir: Point) => {
+      if (!started || gameOver) return;
+      const current = directionRef.current;
+      if (dir.x === -current.x && dir.y === -current.y) return;
+      pendingDirectionRef.current = dir;
+    },
+    [started, gameOver],
+  );
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === " ") {
@@ -366,15 +378,44 @@ export default function SnakePage() {
         return;
       }
       const dir = DIRECTIONS[e.key];
-      if (!dir || !started || gameOver) return;
+      if (!dir) return;
       e.preventDefault();
-      const current = directionRef.current;
-      if (dir.x === -current.x && dir.y === -current.y) return;
-      pendingDirectionRef.current = dir;
+      queueDirection(dir);
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [started, gameOver]);
+  }, [started, gameOver, queueDirection]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStartRef.current = { x: t.clientX, y: t.clientY };
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartRef.current) e.preventDefault();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const start = touchStartRef.current;
+    touchStartRef.current = null;
+    if (!start) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+    const SWIPE_THRESHOLD = 24;
+    if (Math.max(absX, absY) < SWIPE_THRESHOLD) return;
+    if (absX > absY) {
+      queueDirection(dx > 0 ? DIRECTIONS.ArrowRight : DIRECTIONS.ArrowLeft);
+    } else {
+      queueDirection(dy > 0 ? DIRECTIONS.ArrowDown : DIRECTIONS.ArrowUp);
+    }
+  };
+
+  const togglePause = () => {
+    if (started && !gameOver) setPaused((p) => !p);
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#060a14] px-4 py-10 text-white sm:px-6 sm:py-12">
@@ -389,7 +430,7 @@ export default function SnakePage() {
         <div className="mt-4 flex flex-col items-center text-center">
           <h1 className="text-3xl font-extrabold tracking-wide sm:text-4xl">🐍 貪吃蛇</h1>
           <p className="mt-1 text-sm text-emerald-100/60">
-            用方向鍵或 WASD 控制蛇的移動，吃到食物會變長，撞牆或咬到自己就結束
+            用方向鍵、WASD，或在手機上滑動畫面／點下方按鈕控制蛇的移動，吃到食物會變長，撞牆或咬到自己就結束
           </p>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm">
@@ -402,7 +443,12 @@ export default function SnakePage() {
           </div>
         </div>
 
-        <div className="relative mx-auto mt-6 w-full max-w-[440px]">
+        <div
+          className="relative mx-auto mt-6 w-full max-w-[440px] touch-none"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <canvas
             ref={canvasRef}
             width={CANVAS_SIZE}
@@ -437,8 +483,53 @@ export default function SnakePage() {
         </div>
 
         <p className="mt-4 text-center text-xs text-emerald-100/40">
-          按空白鍵可暫停／繼續
+          按空白鍵或點擊中央按鈕可暫停／繼續
         </p>
+
+        <div className="mx-auto mt-6 grid w-44 grid-cols-3 grid-rows-3 gap-2 lg:hidden">
+          <div />
+          <button
+            onClick={() => queueDirection(DIRECTIONS.ArrowUp)}
+            aria-label="向上"
+            className="flex h-12 w-12 touch-manipulation items-center justify-center rounded-xl bg-white/10 text-lg font-bold text-emerald-100 transition-colors hover:bg-white/20 active:bg-emerald-400/30"
+          >
+            ▲
+          </button>
+          <div />
+
+          <button
+            onClick={() => queueDirection(DIRECTIONS.ArrowLeft)}
+            aria-label="向左"
+            className="flex h-12 w-12 touch-manipulation items-center justify-center rounded-xl bg-white/10 text-lg font-bold text-emerald-100 transition-colors hover:bg-white/20 active:bg-emerald-400/30"
+          >
+            ◀
+          </button>
+          <button
+            onClick={togglePause}
+            disabled={!started || gameOver}
+            aria-label="暫停／繼續"
+            className="flex h-12 w-12 touch-manipulation items-center justify-center rounded-xl bg-white/10 text-lg font-bold text-emerald-100 transition-colors hover:bg-white/20 active:bg-emerald-400/30 disabled:opacity-40"
+          >
+            {paused ? "▶" : "⏸"}
+          </button>
+          <button
+            onClick={() => queueDirection(DIRECTIONS.ArrowRight)}
+            aria-label="向右"
+            className="flex h-12 w-12 touch-manipulation items-center justify-center rounded-xl bg-white/10 text-lg font-bold text-emerald-100 transition-colors hover:bg-white/20 active:bg-emerald-400/30"
+          >
+            ▶
+          </button>
+
+          <div />
+          <button
+            onClick={() => queueDirection(DIRECTIONS.ArrowDown)}
+            aria-label="向下"
+            className="flex h-12 w-12 touch-manipulation items-center justify-center rounded-xl bg-white/10 text-lg font-bold text-emerald-100 transition-colors hover:bg-white/20 active:bg-emerald-400/30"
+          >
+            ▼
+          </button>
+          <div />
+        </div>
       </div>
     </main>
   );
