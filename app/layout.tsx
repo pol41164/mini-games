@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "mini 的小工具箱",
+  title: "打發時間小遊戲",
   description: "貪吃蛇、接龍、踩地雷——三個免安裝、開箱即玩的小遊戲。",
 };
 

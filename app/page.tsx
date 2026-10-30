@@ -62,7 +62,7 @@ export default function Home() {
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-6">
           <a href="#top" className="flex items-center gap-2 font-bold tracking-wide">
             <span className="text-xl">🎮</span>
-            <span>mini 的小工具箱</span>
+            <span>打發時間小遊戲</span>
           </a>
           <nav className="hidden items-center gap-6 text-sm text-zinc-300 sm:flex">
             <a href="#games" className="transition-colors hover:text-white">
@@ -94,10 +94,10 @@ export default function Home() {
             免費・免安裝・開箱即玩
           </span>
           <h1 className="mt-6 max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-            打發時間的
+            免費
             <span className="bg-gradient-to-r from-emerald-300 via-amber-300 to-sky-400 bg-clip-text text-transparent">
               {" "}
-              小遊戲工具箱
+              復古小遊戲
             </span>
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-zinc-400 sm:text-lg">
@@ -166,7 +166,7 @@ export default function Home() {
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 px-6 py-10 text-sm text-zinc-500 sm:flex-row sm:justify-between">
           <div className="flex items-center gap-2 text-zinc-300">
             <span className="text-lg">🎮</span>
-            <span className="font-semibold">mini 的小工具箱</span>
+            <span className="font-semibold">打發時間小遊戲</span>
           </div>
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link href="/snake" className="hover:text-white">
@@ -179,7 +179,7 @@ export default function Home() {
               踩地雷
             </Link>
           </nav>
-          <p>© {new Date().getFullYear()} mini 的小工具箱．All rights reserved.</p>
+          <p>© {new Date().getFullYear()} 打發時間小遊戲．All rights reserved.</p>
         </div>
       </footer>
     </div>
