@@ -428,7 +428,7 @@ export default function SnakePage() {
         </Link>
 
         <div className="mt-4 flex flex-col items-center text-center">
-          <h1 className="text-3xl font-extrabold tracking-wide sm:text-4xl">🐍 貪吃蛇</h1>
+          <h1 className="text-3xl font-extrabold tracking-wide sm:text-4xl">🐍 貪食蛇</h1>
           <p className="mt-1 text-sm text-emerald-100/60">
             用方向鍵、WASD，或在手機上滑動畫面／點下方按鈕控制蛇的移動，吃到食物會變長，撞牆或咬到自己就結束
           </p>

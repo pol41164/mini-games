@@ -15,7 +15,7 @@ const GAMES: Game[] = [
   {
     href: "/snake",
     emoji: "🐍",
-    name: "貪吃蛇",
+    name: "貪食蛇",
     tagline: "經典街機遊戲",
     description:
       "用方向鍵或 WASD 控制小蛇吃食物，吃越多身體越長，撞牆或咬到自己就結束。",
@@ -69,7 +69,7 @@ export default function Home() {
               遊戲總覽
             </a>
             <Link href="/snake" className="transition-colors hover:text-white">
-              貪吃蛇
+              貪食蛇
             </Link>
             <Link href="/solitaire" className="transition-colors hover:text-white">
               接龍
@@ -170,7 +170,7 @@ export default function Home() {
           </div>
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link href="/snake" className="hover:text-white">
-              貪吃蛇
+              貪食蛇
             </Link>
             <Link href="/solitaire" className="hover:text-white">
               接龍

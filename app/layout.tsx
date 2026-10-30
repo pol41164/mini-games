@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "打發時間小遊戲",
-  description: "貪吃蛇、接龍、踩地雷——三個免安裝、開箱即玩的小遊戲。",
+  description: "貪食蛇、接龍、踩地雷——三個免安裝、開箱即玩的小遊戲。",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
